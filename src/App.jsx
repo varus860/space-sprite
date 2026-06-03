@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
+import BootScene from './scenes/BootScene';
 
 export default function App() {
   const gameRef = useRef(null);
@@ -18,13 +19,15 @@ export default function App() {
           debug: false,
         },
       },
-      scene: [],
+      scene: [BootScene],
     };
 
     gameRef.current = new Phaser.Game(config);
 
     return () => {
-      gameRef.current.destroy(true);
+      if (gameRef.current) {
+        gameRef.current.destroy(true);
+      }
     };
   }, []);
 
