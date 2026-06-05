@@ -24,8 +24,11 @@ export default class GameScene extends Phaser.Scene {
     g.generateTexture('playerTexture', width, height);
     g.destroy();
 
-    // Create player sprite
-    this.player = this.add.sprite(400, 300, 'playerTexture');
+    this.player = this.physics.add.sprite(400, 300, 'playerTexture');
+    this.player.setCollideWorldBounds(true);
+
+    this.player.body.setSize(24, 24);
+    this.player.body.setOffset(4, 8);
   }
 
   update() {
