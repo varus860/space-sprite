@@ -29,9 +29,47 @@ export default class GameScene extends Phaser.Scene {
 
     this.player.body.setSize(24, 24);
     this.player.body.setOffset(4, 8);
+
+    // Initialize keyboard inputs (Phase 7)
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.wasd = this.input.keyboard.addKeys({
+      up: Phaser.Input.Keyboard.KeyCodes.W,
+      down: Phaser.Input.Keyboard.KeyCodes.S,
+      left: Phaser.Input.Keyboard.KeyCodes.A,
+      right: Phaser.Input.Keyboard.KeyCodes.D
+    });
   }
 
   update() {
-    // Game loop logic
+    const speed = 200;
+    let velocityX = 0;
+    let velocityY = 0;
+
+    if (this.cursors.left.isDown || this.wasd.left.isDown) {
+      velocityX = -1;
+    } else if (this.cursors.right.isDown || this.wasd.right.isDown) {
+      velocityX = 1;
+    }
+
+    if (this.cursors.up.isDown || this.wasd.up.isDown) {
+      velocityY = -1;
+    } else if (this.cursors.down.isDown || this.wasd.down.isDown) {
+      velocityY = 1;
+    }
+
+    // Normalize diagonal movement
+    if (velocityX !== 0 || velocityY !== 0) {
+      const length = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+      velocityX = (velocityX / length) * speed;
+      velocityY = (velocityY / length) * speed;
+    }
+    this.player.setVelocity(velocityX, velocityY);
+
+    // look at cursor
+    const pointer = this.input.activePointer;
+    const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, pointer.worldX, pointer.worldY);
+
+    // add 90 degrees to aligh the polygon with the angle
+    this.player.rotation = angle + Math.PI / 2;
   }
 }
