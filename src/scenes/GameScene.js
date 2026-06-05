@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Bullet from '../entities/Bullet';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -22,6 +23,12 @@ export default class GameScene extends Phaser.Scene {
     g.fillPath();
 
     g.generateTexture('playerTexture', width, height);
+
+    g.clear();
+    g.fillStyle(0xffff00, 1);
+    g.fillRect(0, 0, 8, 8);
+    g.generateTexture('bulletTexture', 8, 8);
+
     g.destroy();
 
     this.player = this.physics.add.sprite(400, 300, 'playerTexture');
@@ -30,7 +37,6 @@ export default class GameScene extends Phaser.Scene {
     this.player.body.setSize(24, 24);
     this.player.body.setOffset(4, 8);
 
-    // Initialize keyboard inputs (Phase 7)
     this.cursors = this.input.keyboard.createCursorKeys();
     this.wasd = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -38,6 +44,27 @@ export default class GameScene extends Phaser.Scene {
       left: Phaser.Input.Keyboard.KeyCodes.A,
       right: Phaser.Input.Keyboard.KeyCodes.D
     });
+
+    this.bullets = this.physics.add.group({
+      classType: Bullet,
+      maxSize: 30,
+      runChildUpdate: true
+    });
+
+    this.input.on('pointerdown', (pointer) => {
+      if (pointer.button === 0) { // left click
+        this.fireBullet();
+      }
+    });
+  }
+
+  fireBullet() {
+    const bullet = this.bullets.get();
+    if (bullet) {
+      const pointer = this.input.activePointer;
+      const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, pointer.worldX, pointer.worldY);
+      bullet.fire(this.player.x, this.player.y, angle);
+    }
   }
 
   update() {
