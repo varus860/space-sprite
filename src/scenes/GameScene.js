@@ -51,11 +51,8 @@ export default class GameScene extends Phaser.Scene {
       runChildUpdate: true
     });
 
-    this.input.on('pointerdown', (pointer) => {
-      if (pointer.button === 0) { // left click
-        this.fireBullet();
-      }
-    });
+    this.lastFired = 0;
+    this.fireRate = 200;
   }
 
   fireBullet() {
@@ -67,7 +64,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  update() {
+  update(time, delta) {
     const speed = 200;
     let velocityX = 0;
     let velocityY = 0;
@@ -98,5 +95,12 @@ export default class GameScene extends Phaser.Scene {
 
     // add 90 degrees to aligh the polygon with the angle
     this.player.rotation = angle + Math.PI / 2;
+
+    if (this.input.activePointer.isDown && this.input.activePointer.button === 0) {
+      if (time > this.lastFired) {
+        this.fireBullet();
+        this.lastFired = time + this.fireRate;
+      }
+    }
   }
 }
