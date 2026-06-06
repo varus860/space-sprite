@@ -29,6 +29,18 @@ export default class GameScene extends Phaser.Scene {
     g.fillRect(0, 0, 8, 8);
     g.generateTexture('bulletTexture', 8, 8);
 
+    // enemy texture
+    g.clear();
+    g.fillStyle(0xff3333, 1);
+    g.beginPath();
+    g.moveTo(16, 0);
+    g.lineTo(32, 16);
+    g.lineTo(16, 32);
+    g.lineTo(0, 16);
+    g.closePath();
+    g.fillPath();
+    g.generateTexture('enemyTexture', 32, 32);
+
     g.destroy();
 
     this.player = this.physics.add.sprite(400, 300, 'playerTexture');
