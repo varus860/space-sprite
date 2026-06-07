@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Bullet from '../entities/Bullet';
+import Enemy from '../entities/Enemy';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -62,6 +63,16 @@ export default class GameScene extends Phaser.Scene {
       maxSize: 30,
       runChildUpdate: true
     });
+
+    this.enemies = this.physics.add.group({
+      classType: Enemy,
+      runChildUpdate: true
+    });
+
+    const randomX = Phaser.Math.Between(50, 750);
+    const randomY = Phaser.Math.Between(50, 550);
+    const enemy = new Enemy(this, randomX, randomY);
+    this.enemies.add(enemy);
 
     this.lastFired = 0;
     this.fireRate = 200;
