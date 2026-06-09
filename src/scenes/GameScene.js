@@ -76,6 +76,16 @@ export default class GameScene extends Phaser.Scene {
 
     this.lastFired = 0;
     this.fireRate = 200;
+
+    this.physics.add.overlap(this.bullets, this.enemies, this.handleBulletEnemyCollision, null, this);
+  }
+
+  handleBulletEnemyCollision(bullet, enemy) {
+    if (bullet.active && enemy.active) {
+      bullet.setActive(false);
+      bullet.setVisible(false);
+      enemy.takeDamage(1);
+    }
   }
 
   fireBullet() {
