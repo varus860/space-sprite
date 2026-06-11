@@ -69,10 +69,42 @@ export default class GameScene extends Phaser.Scene {
       runChildUpdate: true
     });
 
-    const randomX = Phaser.Math.Between(50, 750);
-    const randomY = Phaser.Math.Between(50, 550);
-    const enemy = new Enemy(this, randomX, randomY);
-    this.enemies.add(enemy);
+    const ENEMY_COUNT = 10;
+    const MIN_DISTANCE_FROM_PLAYER = 150;
+    const MIN_DISTANCE_BETWEEN_ENEMIES = 40;
+
+    for (let i = 0; i < ENEMY_COUNT; i++) {
+      let x, y;
+      let validPosition = false;
+      let attempts = 0;
+
+      while (!validPosition && attempts < 100) {
+        x = Phaser.Math.Between(50, 750);
+        y = Phaser.Math.Between(50, 550);
+        validPosition = true;
+
+        // Check distance from player
+        if (Phaser.Math.Distance.Between(x, y, this.player.x, this.player.y) < MIN_DISTANCE_FROM_PLAYER) {
+          validPosition = false;
+        }
+
+        // Check distance from other enemies
+        if (validPosition) {
+          for (const enemy of this.enemies.getChildren()) {
+            if (Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y) < MIN_DISTANCE_BETWEEN_ENEMIES) {
+              validPosition = false;
+              break;
+            }
+          }
+        }
+        attempts++;
+      }
+
+      if (validPosition) {
+        const enemy = new Enemy(this, x, y);
+        this.enemies.add(enemy);
+      }
+    }
 
     this.lastFired = 0;
     this.fireRate = 200;
