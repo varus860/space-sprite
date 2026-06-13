@@ -66,7 +66,10 @@ export default class GameScene extends Phaser.Scene {
 
     this.enemies = this.physics.add.group({
       classType: Enemy,
-      runChildUpdate: true
+      runChildUpdate: true,
+      collideWorldBounds: true,
+      bounceX: 1,
+      bounceY: 1
     });
 
     const ENEMY_COUNT = 10;
@@ -103,11 +106,18 @@ export default class GameScene extends Phaser.Scene {
       if (validPosition) {
         const enemy = new Enemy(this, x, y);
         this.enemies.add(enemy);
+        enemy.pickRandomDirection();
       }
     }
 
     this.lastFired = 0;
     this.fireRate = 200;
+
+    // Player faces upward by default (angle in radians, -PI/2 = up)
+    this.facingAngle = -Math.PI / 2;
+
+    // Space key to fire
+    this.fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     this.physics.add.overlap(this.bullets, this.enemies, this.handleBulletEnemyCollision, null, this);
   }
@@ -123,9 +133,7 @@ export default class GameScene extends Phaser.Scene {
   fireBullet() {
     const bullet = this.bullets.get();
     if (bullet) {
-      const pointer = this.input.activePointer;
-      const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, pointer.worldX, pointer.worldY);
-      bullet.fire(this.player.x, this.player.y, angle);
+      bullet.fire(this.player.x, this.player.y, this.facingAngle);
     }
   }
 
@@ -151,21 +159,20 @@ export default class GameScene extends Phaser.Scene {
       const length = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
       velocityX = (velocityX / length) * speed;
       velocityY = (velocityY / length) * speed;
+
+      // Update facing direction based on movement
+      this.facingAngle = Math.atan2(velocityY, velocityX);
     }
     this.player.setVelocity(velocityX, velocityY);
 
-    // look at cursor
-    const pointer = this.input.activePointer;
-    const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, pointer.worldX, pointer.worldY);
+    // Rotate player to face movement direction (+ 90° to align the triangle)
+    this.player.rotation = this.facingAngle + Math.PI / 2;
 
-    // add 90 degrees to aligh the polygon with the angle
-    this.player.rotation = angle + Math.PI / 2;
-
-    if (this.input.activePointer.isDown && this.input.activePointer.button === 0) {
-      if (time > this.lastFired) {
-        this.fireBullet();
-        this.lastFired = time + this.fireRate;
-      }
+    // Fire on Space key
+    if (this.fireKey.isDown && time > this.lastFired) {
+      this.fireBullet();
+      this.lastFired = time + this.fireRate;
     }
   }
 }
+
