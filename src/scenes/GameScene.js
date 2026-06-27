@@ -113,13 +113,44 @@ export default class GameScene extends Phaser.Scene {
     this.lastFired = 0;
     this.fireRate = 200;
 
-    // Player faces upward by default (angle in radians, -PI/2 = up)
+    // Playes faces up
     this.facingAngle = -Math.PI / 2;
-
-    // Space key to fire
+    // Space to fire
     this.fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
+    this.health = 5;
+    this.invincible = false;
+
     this.physics.add.overlap(this.bullets, this.enemies, this.handleBulletEnemyCollision, null, this);
+    this.physics.add.overlap(this.player, this.enemies, this.handlePlayerEnemyCollision, null, this);
+  }
+
+  handlePlayerEnemyCollision(player, enemy) {
+    if (this.invincible) return;
+
+    this.health -= 1;
+    this.invincible = true;
+
+    // Knockback: push player away from enemy
+    const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, player.x, player.y);
+    const knockbackSpeed = 300;
+    player.setVelocity(Math.cos(angle) * knockbackSpeed, Math.sin(angle) * knockbackSpeed);
+
+    // Blink effect
+    this.tweens.add({
+      targets: player,
+      alpha: 0,
+      duration: 100,
+      ease: 'Linear',
+      yoyo: true,
+      repeat: 4
+    });
+
+    // End invincibility after 1 second
+    this.time.delayedCall(1000, () => {
+      this.invincible = false;
+      player.setAlpha(1);
+    });
   }
 
   handleBulletEnemyCollision(bullet, enemy) {
@@ -160,15 +191,14 @@ export default class GameScene extends Phaser.Scene {
       velocityX = (velocityX / length) * speed;
       velocityY = (velocityY / length) * speed;
 
-      // Update facing direction based on movement
+      // Update direction
       this.facingAngle = Math.atan2(velocityY, velocityX);
     }
     this.player.setVelocity(velocityX, velocityY);
 
-    // Rotate player to face movement direction (+ 90° to align the triangle)
+    // Rotate player
     this.player.rotation = this.facingAngle + Math.PI / 2;
-
-    // Fire on Space key
+    // Fire
     if (this.fireKey.isDown && time > this.lastFired) {
       this.fireBullet();
       this.lastFired = time + this.fireRate;
