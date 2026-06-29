@@ -10,9 +10,21 @@ export default class HUD {
     });
     this.healthText.setScrollFactor(0);
     this.healthText.setDepth(10);
+
+    this.enemyText = scene.add.text(784, 16, '', {
+      fontSize: '18px',
+      fill: '#ffffff'
+    });
+    this.enemyText.setScrollFactor(0);
+    this.enemyText.setDepth(10);
+    this.enemyText.setOrigin(1, 0);
   }
 
   update(health) {
     this.healthText.setText(`HP: ${health}`);
+  }
+
+  updateEnemies(remaining, total) {
+    this.enemyText.setText(`Enemies: ${remaining} / ${total}`);
   }
 }

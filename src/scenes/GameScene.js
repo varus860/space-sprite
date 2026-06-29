@@ -122,8 +122,11 @@ export default class GameScene extends Phaser.Scene {
     this.health = 5;
     this.invincible = false;
 
+    this.totalEnemies = this.enemies.getChildren().length;
+
     this.hud = new HUD(this);
     this.hud.update(this.health);
+    this.hud.updateEnemies(this.totalEnemies, this.totalEnemies);
 
     this.physics.add.overlap(this.bullets, this.enemies, this.handleBulletEnemyCollision, null, this);
     this.physics.add.overlap(this.player, this.enemies, this.handlePlayerEnemyCollision, null, this);
@@ -162,7 +165,11 @@ export default class GameScene extends Phaser.Scene {
     if (bullet.active && enemy.active) {
       bullet.setActive(false);
       bullet.setVisible(false);
+      const wasAlive = enemy.isAlive;
       enemy.takeDamage(1);
+      if (wasAlive && !enemy.isAlive) {
+        this.hud.updateEnemies(this.enemies.countActive(), this.totalEnemies);
+      }
     }
   }
 
