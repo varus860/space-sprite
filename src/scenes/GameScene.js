@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import Bullet from '../entities/Bullet';
 import Enemy from '../entities/Enemy';
+import HUD from '../ui/HUD';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -121,6 +122,9 @@ export default class GameScene extends Phaser.Scene {
     this.health = 5;
     this.invincible = false;
 
+    this.hud = new HUD(this);
+    this.hud.update(this.health);
+
     this.physics.add.overlap(this.bullets, this.enemies, this.handleBulletEnemyCollision, null, this);
     this.physics.add.overlap(this.player, this.enemies, this.handlePlayerEnemyCollision, null, this);
   }
@@ -129,6 +133,7 @@ export default class GameScene extends Phaser.Scene {
     if (this.invincible) return;
 
     this.health -= 1;
+    this.hud.update(this.health);
     this.invincible = true;
 
     // Knockback: push player away from enemy
