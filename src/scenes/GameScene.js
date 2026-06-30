@@ -168,7 +168,11 @@ export default class GameScene extends Phaser.Scene {
       const wasAlive = enemy.isAlive;
       enemy.takeDamage(1);
       if (wasAlive && !enemy.isAlive) {
-        this.hud.updateEnemies(this.enemies.countActive(), this.totalEnemies);
+        const activeEnemies = this.enemies.countActive();
+        this.hud.updateEnemies(activeEnemies, this.totalEnemies);
+        if (activeEnemies === 0) {
+          this.scene.start('WinScene');
+        }
       }
     }
   }
