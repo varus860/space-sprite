@@ -5,6 +5,10 @@ export default class WinScene extends Phaser.Scene {
     super('WinScene');
   }
 
+  init(data) {
+    this.score = data.score || 0;
+  }
+
   create() {
     const { width, height } = this.scale;
 
@@ -14,7 +18,12 @@ export default class WinScene extends Phaser.Scene {
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    const playAgainBtn = this.add.text(width / 2, height / 2 + 50, 'Play Again', {
+    this.add.text(width / 2, height / 2 + 10, `Final Score: ${this.score}`, {
+      fontSize: '24px',
+      color: '#ffff00'
+    }).setOrigin(0.5);
+
+    const playAgainBtn = this.add.text(width / 2, height / 2 + 70, 'Play Again', {
       fontSize: '24px',
       color: '#ffffff',
       backgroundColor: '#333333',

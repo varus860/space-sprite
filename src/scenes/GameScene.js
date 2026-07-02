@@ -123,10 +123,12 @@ export default class GameScene extends Phaser.Scene {
     this.invincible = false;
 
     this.totalEnemies = this.enemies.getChildren().length;
+    this.score = 0;
 
     this.hud = new HUD(this);
     this.hud.update(this.health);
     this.hud.updateEnemies(this.totalEnemies, this.totalEnemies);
+    this.hud.updateScore(this.score);
 
     this.physics.add.overlap(this.bullets, this.enemies, this.handleBulletEnemyCollision, null, this);
     this.physics.add.overlap(this.player, this.enemies, this.handlePlayerEnemyCollision, null, this);
@@ -137,9 +139,15 @@ export default class GameScene extends Phaser.Scene {
 
     this.health -= 1;
     this.hud.update(this.health);
+
+    if (this.health <= 0) {
+      const enemiesDestroyed = this.totalEnemies - this.enemies.countActive();
+      this.scene.start('GameOverScene', { enemiesDestroyed, score: this.score });
+      return;
+    }
+
     this.invincible = true;
 
-    // Knockback: push player away from enemy
     const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, player.x, player.y);
     const knockbackSpeed = 300;
     player.setVelocity(Math.cos(angle) * knockbackSpeed, Math.sin(angle) * knockbackSpeed);
@@ -168,10 +176,13 @@ export default class GameScene extends Phaser.Scene {
       const wasAlive = enemy.isAlive;
       enemy.takeDamage(1);
       if (wasAlive && !enemy.isAlive) {
+        this.score += 100;
+        this.hud.updateScore(this.score);
+        
         const activeEnemies = this.enemies.countActive();
         this.hud.updateEnemies(activeEnemies, this.totalEnemies);
         if (activeEnemies === 0) {
-          this.scene.start('WinScene');
+          this.scene.start('WinScene', { score: this.score });
         }
       }
     }

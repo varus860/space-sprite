@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import BootScene from './scenes/BootScene';
 import GameScene from './scenes/GameScene';
 import WinScene from './scenes/WinScene';
+import GameOverScene from './scenes/GameOverScene';
 
 export default function App() {
   const gameRef = useRef(null);
@@ -21,7 +22,7 @@ export default function App() {
           debug: false,
         },
       },
-      scene: [BootScene, GameScene, WinScene],
+      scene: [BootScene, GameScene, WinScene, GameOverScene],
     };
 
     gameRef.current = new Phaser.Game(config);
