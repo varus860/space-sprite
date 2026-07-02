@@ -6,7 +6,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    // Preload assets here in the future
+    this.load.audio('shoot', 'assets/audio/shoot.mp3');
   }
 
   create() {
