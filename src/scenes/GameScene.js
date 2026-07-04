@@ -43,7 +43,23 @@ export default class GameScene extends Phaser.Scene {
     g.fillPath();
     g.generateTexture('enemyTexture', 32, 32);
 
+    // particle texture
+    g.clear();
+    g.fillStyle(0xffffff, 1);
+    g.fillRect(0, 0, 4, 4);
+    g.generateTexture('particleTexture', 4, 4);
+
     g.destroy();
+
+    this.explosionEmitter = this.add.particles(0, 0, 'particleTexture', {
+      lifespan: 500,
+      speed: { min: 50, max: 200 },
+      scale: { start: 1, end: 0 },
+      alpha: { start: 1, end: 0 },
+      blendMode: 'ADD',
+      emitting: false,
+      tint: [0xffaa00, 0xff0000, 0xffff00]
+    });
 
     this.player = this.physics.add.sprite(400, 300, 'playerTexture');
     this.player.setCollideWorldBounds(true);
@@ -176,6 +192,8 @@ export default class GameScene extends Phaser.Scene {
       const wasAlive = enemy.isAlive;
       enemy.takeDamage(1);
       if (wasAlive && !enemy.isAlive) {
+        this.explosionEmitter.explode(20, enemy.x, enemy.y);
+
         this.score += 100;
         this.hud.updateScore(this.score);
         
