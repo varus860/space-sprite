@@ -16,6 +16,10 @@ export default class Bullet extends Phaser.Physics.Arcade.Sprite {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
 
+    if (this.active && this.scene.bulletTrailEmitter) {
+      this.scene.bulletTrailEmitter.emitParticleAt(this.x, this.y);
+    }
+
     const bounds = this.scene.physics.world.bounds;
 
     if (

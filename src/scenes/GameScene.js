@@ -61,6 +61,15 @@ export default class GameScene extends Phaser.Scene {
       tint: [0xffaa00, 0xff0000, 0xffff00]
     });
 
+    this.bulletTrailEmitter = this.add.particles(0, 0, 'particleTexture', {
+      lifespan: 300,
+      scale: { start: 1.5, end: 0 },
+      alpha: { start: 0.6, end: 0 },
+      blendMode: 'ADD',
+      emitting: false,
+      tint: 0x00ffff
+    });
+
     this.player = this.physics.add.sprite(400, 300, 'playerTexture');
     this.player.setCollideWorldBounds(true);
 
@@ -196,7 +205,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.score += 100;
         this.hud.updateScore(this.score);
-        
+
         const activeEnemies = this.enemies.countActive();
         this.hud.updateEnemies(activeEnemies, this.totalEnemies);
         if (activeEnemies === 0) {
