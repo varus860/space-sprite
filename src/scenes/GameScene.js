@@ -202,6 +202,7 @@ export default class GameScene extends Phaser.Scene {
       enemy.takeDamage(1);
       if (wasAlive && !enemy.isAlive) {
         this.explosionEmitter.explode(20, enemy.x, enemy.y);
+        this.cameras.main.shake(100, 0.005);
 
         this.score += 100;
         this.hud.updateScore(this.score);
