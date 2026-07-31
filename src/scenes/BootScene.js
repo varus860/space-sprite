@@ -18,7 +18,7 @@ export default class BootScene extends Phaser.Scene {
 
     // Transition to GameScene after a short delay so the loading text is visible
     this.time.delayedCall(1000, () => {
-      this.scene.start('GameScene');
+      this.scene.start('MainMenuScene');
     });
   }
 }

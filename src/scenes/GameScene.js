@@ -220,7 +220,7 @@ export default class GameScene extends Phaser.Scene {
     const bullet = this.bullets.get();
     if (bullet) {
       bullet.fire(this.player.x, this.player.y, this.facingAngle);
-      this.sound.play('shoot');
+      this.sound.play('shoot', { volume: 0.3 });
     }
   }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
 import BootScene from './scenes/BootScene';
+import MainMenuScene from './scenes/MainMenuScene';
 import GameScene from './scenes/GameScene';
 import WinScene from './scenes/WinScene';
 import GameOverScene from './scenes/GameOverScene';
@@ -22,7 +23,7 @@ export default function App() {
           debug: false,
         },
       },
-      scene: [BootScene, GameScene, WinScene, GameOverScene],
+      scene: [BootScene, MainMenuScene, GameScene, WinScene, GameOverScene],
     };
 
     gameRef.current = new Phaser.Game(config);
