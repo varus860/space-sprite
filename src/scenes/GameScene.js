@@ -11,7 +11,27 @@ export default class GameScene extends Phaser.Scene {
   create() {
     console.log('GameScene create() fired');
 
-    // Create player texture
+    const gameWidth = this.scale.width;
+    const gameHeight = this.scale.height;
+
+    const makeStars = (key, size, count, color, textureSize) => {
+      const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+      graphics.fillStyle(color, 1);
+      for (let i = 0; i < count; i++) {
+        graphics.fillRect(Phaser.Math.Between(0, textureSize), Phaser.Math.Between(0, textureSize), size, size);
+      }
+      graphics.generateTexture(key, textureSize, textureSize);
+      graphics.destroy();
+    };
+
+    makeStars('starsSmall', 1, 150, 0xffffff, 400);
+    makeStars('starsMedium', 2, 50, 0xaaaaaa, 400);
+    makeStars('starsLarge', 3, 20, 0x777777, 400);
+
+    this.bgStarsSmall = this.add.tileSprite(gameWidth / 2, gameHeight / 2, gameWidth, gameHeight, 'starsSmall');
+    this.bgStarsMedium = this.add.tileSprite(gameWidth / 2, gameHeight / 2, gameWidth, gameHeight, 'starsMedium');
+    this.bgStarsLarge = this.add.tileSprite(gameWidth / 2, gameHeight / 2, gameWidth, gameHeight, 'starsLarge');
+
     const width = 32;
     const height = 32;
     const g = this.make.graphics({ x: 0, y: 0, add: false });
@@ -225,6 +245,14 @@ export default class GameScene extends Phaser.Scene {
   }
 
   update(time, delta) {
+    // Scroll starfield
+    this.bgStarsSmall.tilePositionX += 0.01 * delta;
+    this.bgStarsSmall.tilePositionY += 0.01 * delta;
+    this.bgStarsMedium.tilePositionX += 0.03 * delta;
+    this.bgStarsMedium.tilePositionY += 0.03 * delta;
+    this.bgStarsLarge.tilePositionX += 0.06 * delta;
+    this.bgStarsLarge.tilePositionY += 0.06 * delta;
+
     const speed = 200;
     let velocityX = 0;
     let velocityY = 0;
